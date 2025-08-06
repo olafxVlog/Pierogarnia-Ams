@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Pierogarnia & Naleśnikarnia w Starogardzie Gdańskim – domowe smaki, szybkie zamówienia i uśmiech każdego dnia.">
+  <title>Pierogarnia & Naleśnikarnia</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff7f0;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(45deg, #ffdab9, #ffb347);
+      color: #333;
+      padding: 2em 1em;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+
+    nav {
+      background-color: #ffe4c4;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 1em;
+      gap: 1.5em;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #000;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ff7f50;
+    }
+
+    section {
+      padding: 2em;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .circle {
+      width: 35px;
+      height: 35px;
+      background-color: #ff7f50;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      margin: 0 5px;
+      transition: background 0.3s;
+    }
+
+    .circle:hover {
+      background-color: #e9693e;
+    }
+
+    .circle a {
+      color: white;
+      text-decoration: none;
+    }
+
+    form {
+      background: #fff;
+      border-radius: 8px;
+      padding: 2em;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+
+    form button {
+      background-color: #ff7f50;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 1em;
+      border-radius: 4px;
+      margin-top: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    form button:hover {
+      background-color: #e9693e;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1em;
+    }
+
+    .menu-item {
+      background: #fff;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .menu-item:hover {
+      transform: scale(1.05);
+    }
+
+    .menu-item .tooltip {
+      visibility: hidden;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      text-align: left;
+      border-radius: 6px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85em;
+    }
+
+    .menu-item:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    footer {
+      background-color: #ffdab9;
+      padding: 2em 1em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pierogarnia & Naleśnikarnia</h1>
+    <p>Smak domowy w sercu Starogardu Gdańskiego</p>
+    <div>
+      <div class="circle" title="Instagram"><a href="https://instagram.com/smoking_gang_stg" target="_blank">📷</a></div>
+      <div class="circle" title="TikTok"><a href="https://tiktok.com/@m_plinska07" target="_blank">🎵</a></div>
+      <div class="circle" title="Facebook"><a href="https://facebook.com/olaf.jatkowski" target="_blank">📘</a></div>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#o-nas">O nas</a>
+    <a href="#menu">Menu</a>
+    <a href="#zamowienia">Zamówienia</a>
+    <a href="#mapa">Lokalizacja</a>
+  </nav>
+
+  <section id="o-nas">
+    <h2>O nas</h2>
+    <p>Jesteśmy lokalną pierogarnią i naleśnikarnią serwującą domowe smaki w sercu Starogardu Gdańskiego. Naszą pasją jest tworzenie dań, które przypomną Ci dzieciństwo.</p>
+  </section>
+
+  <section id="menu">
+    <h2>Menu</h2>
+    <div class="menu-grid" id="menuItems"></div>
+  </section>
+
+  <form id="orderForm">
+    <input type="text" name="name" placeholder="Twoje imię" required />
+    <input type="tel" name="phone" placeholder="Telefon" required />
+    <textarea name="order" placeholder="Twoje zamówienie" required></textarea>
+    <button type="submit">Zamów</button>
+  </form>
+  
+  <div id="menuItems"></div>
+    </form>
+  </section>
+
+  <section id="mapa">
+    <h2>Gdzie jesteśmy?</h2>
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2350.1849892322114!2d18.527331815866295!3d53.96327373633652!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46fd0a47713b9b21%3A0x82e19e10e6654cf9!2sStarogard%20Gda%C5%84ski!5e0!3m2!1spl!2spl!4v1695039343123"
+      width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy">
+    </iframe>
+  </section>
+
+  <footer>
+    <div>
+      <div class="circle" title="Instagram"><a href="https://instagram.com/smoking_gang_stg" target="_blank">📷</a></div>
+      <div class="circle" title="TikTok"><a href="https://tiktok.com/@m_plinska07" target="_blank">🎵</a></div>
+      <div class="circle" title="Facebook"><a href="https://facebook.com/olaf.jatkowski" target="_blank">📘</a></div>
+    </div>
+    <p>&copy; 2025 Pierogarnia & Naleśnikarnia</p>
+  </footer>
+
+  <script>
+    const menu = [
+      { emoji: '🥟', name: 'Ruskie', kcal: 380, skladniki: 'ziemniaki, twaróg, cebula' },
+      { emoji: '🥟', name: 'Z mięsem', kcal: 420, skladniki: 'mięso wieprzowe, cebula, przyprawy' },
+      { emoji: '🥟', name: 'Z kapustą i grzybami', kcal: 400, skladniki: 'kapusta kiszona, pieczarki, cebula' },
+      { emoji: '🥟', name: 'Ze szpinakiem i fetą', kcal: 370, skladniki: 'szpinak, feta, czosnek' },
+      { emoji: '🥟', name: 'Z jagodami', kcal: 350, skladniki: 'jagody, cukier' },
+      { emoji: '🥟', name: 'Z serem na słodko', kcal: 360, skladniki: 'twaróg, cukier, wanilia' },
+      { emoji: '🥟', name: 'Z dynią i imbirem', kcal: 370, skladniki: 'dynia, imbir, cynamon' },
+      { emoji: '🥟', name: 'Z łososiem', kcal: 410, skladniki: 'łosoś, koperek, śmietana' },
+      { emoji: '🥟', name: 'Z kurczakiem curry', kcal: 430, skladniki: 'kurczak, curry, ryż' },
+      { emoji: '🥟', name: 'Z brokułami i serem', kcal: 390, skladniki: 'brokuły, ser żółty' },
+      { emoji: '🥟', name: 'Z boczkiem i cebulą', kcal: 440, skladniki: 'boczek, cebula' },
+      { emoji: '🥟', name: 'Z soczewicą', kcal: 410, skladniki: 'soczewica, cebula, marchew' },
+      { emoji: '🥟', name: 'Z oscypkiem i żurawiną', kcal: 390, skladniki: 'oscypek, żurawina' },
+      { emoji: '🥟', name: 'Z tofu i warzywami', kcal: 370, skladniki: 'tofu, papryka, cukinia' },
+      { emoji: '🥟', name: 'Z gruszką i serem pleśniowym', kcal: 400, skladniki: 'gruszka, ser pleśniowy' },
+      { emoji: '🥞', name: 'Z serem i truskawkami', kcal: 360, skladniki: 'ser biały, truskawki' },
+      { emoji: '🥞', name: 'Z nutellą i bananem', kcal: 420, skladniki: 'nutella, banan' },
+      { emoji: '🥞', name: 'Z dżemem malinowym', kcal: 350, skladniki: 'dżem malinowy' },
+      { emoji: '🥞', name: 'Z kurczakiem i szpinakiem', kcal: 440, skladniki: 'kurczak, szpinak' },
+      { emoji: '🥞', name: 'Z warzywami i serem feta', kcal: 390, skladniki: 'papryka, cukinia, feta' },
+    ];
+  
+    const menuContainer = document.getElementById('menuItems');
+    menu.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'menu-item';
+      div.innerHTML = `${item.emoji} ${item.name}
+        <div class="tooltip">
+          Kalorie: ${item.kcal} kcal<br>
+          Składniki: ${item.skladniki}
+        </div>`;
+      menuContainer.appendChild(div);
+    });
+  
+    const form = document.getElementById('orderForm');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+  
+      const formData = new FormData(form);
+      const orderData = {
+        name: formData.get('name').trim(),
+        phone: formData.get('phone').trim(),
+        order: formData.get('order').trim(),
+        date: new Date().toLocaleString()
+      };
+  
+      if (!orderData.name || !orderData.phone || !orderData.order) {
+        alert('Wypełnij wszystkie pola!');
+        return;
+      }
+  
+      // Pobierz aktualne zamówienia z localStorage
+      let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push(orderData);
+      localStorage.setItem('orders', JSON.stringify(orders));
+  
+      alert('Zamówienie zostało zapisane!');
+  
+      form.reset();
+  
+      // Jeśli masz logActivity w AMS, możesz spróbować wywołać tutaj (jeśli dostępna w pierogi.html):
+      if (typeof logActivity === 'function') {
+        logActivity(`Dodano zamówienie: ${orderData.name}`);
+      }
+    });
+  </script>
+  
+</body>
+</html>

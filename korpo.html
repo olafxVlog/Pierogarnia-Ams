@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AMS - System Zarządzania</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    margin: 0; color: #333;
+  }
+  .login-box {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 320px;
+    margin: 100px auto;
+  }
+  input, button, select, textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border 0.2s ease;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  button {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  .error {
+    color: red;
+    margin-top: 10px;
+  }
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #007bff;
+    color: white;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    z-index: 1000;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: default;
+  }
+  .user-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: white;
+    color: #007bff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .user-details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    user-select: none;
+  }
+  .user-name {
+    font-weight: 700;
+  }
+  .user-department {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  #panel {
+    margin-top: 70px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px 40px;
+  }
+  .nav-buttons {
+    margin-bottom: 20px;
+  }
+  .nav-buttons button {
+    margin-right: 10px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: #007bff;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .nav-buttons button:hover {
+    background: #0056b3;
+  }
+  .section {
+    display: none;
+  }
+  .section.active {
+    display: block;
+  }
+  ul {
+    padding-left: 20px;
+  }
+  h3 {
+    color: #007bff;
+    margin-top: 0;
+  }
+  .announcement {
+    background: #fff8dc;
+    padding: 10px;
+    border-left: 4px solid #ffc107;
+    margin-bottom: 10px;
+    border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="login-box" id="loginScreen">
+  <h2>Zaloguj się do AMS</h2>
+  <input type="text" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Hasło" />
+  <button onclick="login()">Zaloguj</button>
+  <p class="error" id="error"></p>
+</div>
+
+<div class="topbar" id="topbar" style="display:none;">
+  <div class="user-info">
+    <div class="user-icon" id="userIcon">👤</div>
+    <div class="user-details">
+      <div class="user-name" id="userName">User</div>
+      <div class="user-department" id="userRole">Dział</div>
+    </div>
+  </div>
+  <button onclick="logout()" style="background:#dc3545;">Wyloguj</button>
+</div>
+
+<div id="panel" style="display:none;">
+  <div class="nav-buttons">
+    <button onclick="showSection('orders')">Zamówienia</button>
+    <button onclick="showSection('announcements')">Ogłoszenia</button>
+    <button id="adminUsersBtn" onclick="showSection('users')" style="display:none;">Zarządzanie użytkownikami</button>
+  </div>
+
+  <div id="orders" class="section">
+    <h3>Zamówienia z Pierogarni</h3>
+    <ul id="ordersList"></ul>
+  </div>
+
+  <div id="announcements" class="section">
+    <h3>Ogłoszenia</h3>
+    <div id="announcementsList"></div>
+    <textarea id="announcementText" rows="3" placeholder="Dodaj nowe ogłoszenie..."></textarea>
+    <button onclick="addAnnouncement()">Dodaj ogłoszenie</button>
+  </div>
+
+  <div id="users" class="section">
+    <h3>Zarządzanie użytkownikami</h3>
+    <input type="text" id="newUserName" placeholder="Imię i nazwisko" />
+    <select id="newUserDepartment">
+      <option value="pierogarnia">Pierogarnia</option>
+      <option value="magazyn">Magazyn</option>
+      <option value="zarzad">Zarząd</option>
+      <option value="kuchnia">Kuchnia</option>
+    </select>
+    <button onclick="addUser()">Dodaj użytkownika</button>
+    <h4>Lista użytkowników</h4>
+    <ul id="userList"></ul>
+  </div>
+</div>
+
+<script>
+  // Użytkownicy w formacie: email: {password, name, role, department}
+  const users = {
+    "o.admin@ams.pl": { password: null, name: "Olaf", role: "Administrator", department: "zarząd" },
+    "michalina@ams.pl": { password: null, name: "Michalina", role: "Personel", department: "zarząd" },
+  };
+
+  let loggedUser = null;
+  let announcements = [];
+
+  // Logowanie
+  function login() {
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const pass = document.getElementById("password").value;
+    const error = document.getElementById("error");
+    error.textContent = "";
+
+    if (!users[email]) {
+      error.textContent = "Nie znaleziono użytkownika";
+      return;
+    }
+    const user = users[email];
+    if (user.password === null) {
+      // Pierwsze logowanie - ustaw hasło
+      if(pass.length < 4){
+        error.textContent = "Hasło musi mieć co najmniej 4 znaki";
+        return;
+      }
+      user.password = pass;
+      alert("Hasło ustawione. Zalogowano pomyślnie.");
+      loggedUser = user;
+      postLogin(email);
+    } else {
+      // Normalne logowanie
+      if(user.password !== pass){
+        error.textContent = "Błędne hasło";
+        return;
+      }
+      loggedUser = user;
+      postLogin(email);
+    }
+  }
+
+  function postLogin(email) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("panel").style.display = "block";
+    document.getElementById("topbar").style.display = "flex";
+
+    document.getElementById("userName").textContent = loggedUser.name;
+    document.getElementById("userRole").textContent = `Dział: ${loggedUser.department}`;
+    document.getElementById("userIcon").textContent = "👤";
+
+    // Pokaż/ukryj panel użytkowników tylko dla admina
+    document.getElementById("adminUsersBtn").style.display = loggedUser.role === "Administrator" ? "inline-block" : "none";
+
+    showSection("orders");
+    fetchOrders();
+    updateAnnouncements();
+    updateUserList();
+  }
+
+  function logout() {
+    loggedUser = null;
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("panel").style.display = "none";
+    document.getElementById("topbar").style.display = "none";
+    document.getElementById("email").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("error").textContent = "";
+  }
+
+  // Nawigacja sekcji
+  function showSection(sectionId) {
+    const sections = document.querySelectorAll(".section");
+    sections.forEach(sec => sec.classList.remove("active"));
+    document.getElementById(sectionId).classList.add("active");
+
+    if(sectionId === "orders") fetchOrders();
+    if(sectionId === "announcements") updateAnnouncements();
+    if(sectionId === "users") updateUserList();
+  }
+
+  // --- Zamówienia ---
+
+  function fetchOrders() {
+    fetch('Pierogi.html')
+      .then(response => response.text())
+      .then(htmlText => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, "text/html");
+        const pre = doc.querySelector("pre");
+        if(pre){
+          const orders = JSON.parse(pre.textContent);
+          renderOrders(orders);
+        } else {
+          document.getElementById("ordersList").innerHTML = "<li>Brak zamówień</li>";
+        }
+      })
+      .catch(() => {
+        document.getElementById("ordersList").innerHTML = "<li>Błąd ładowania zamówień</li>";
+      });
+  }
+
+  function renderOrders(orders) {
+    const ul = document.getElementById("ordersList");
+    ul.innerHTML = "";
+    orders.forEach(order => {
+      const li = document.createElement("li");
+      li.textContent = `#${order.id} - ${order.klient} zamówił ${order.ilość} x ${order.produkt} (status: ${order.status})`;
+      ul.appendChild(li);
+    });
+  }
+
+  // Odświeżanie zamówień co 5 sekund, tylko jeśli panel jest widoczny
+  setInterval(() => {
+    if(loggedUser && document.getElementById("orders").classList.contains("active")){
+      fetchOrders();
+    }
+  }, 5000);
+
+  // --- Ogłoszenia ---
+
+  function updateAnnouncements() {
+    const container = document.getElementById("announcementsList");
+    container.innerHTML = "";
+    if(announcements.length === 0){
+      container.innerHTML = "<p>Brak ogłoszeń</p>";
+    } else {
+      announcements.forEach(text => {
+        const div = document.createElement("div");
+        div.className = "announcement";
+        div.textContent = text;
+        container.appendChild(div);
+      });
+    }
+  }
+
+  function addAnnouncement() {
+    const textarea = document.getElementById("announcementText");
+    const text = textarea.value.trim();
+    if(text.length === 0) return alert("Wpisz tekst ogłoszenia");
+    announcements.unshift(text);
+    textarea.value = "";
+    updateAnnouncements();
+  }
+
+  // --- Zarządzanie użytkownikami (admin) ---
+
+  function updateUserList(){
+    const ul = document.getElementById("userList");
+    ul.innerHTML = "";
+    for(const email in users){
+      const u = users[email];
+      const li = document.createElement("li");
+      li.textContent = `${u.name} (${email}) - dział: ${u.department}, rola: ${u.role}`;
+      ul.appendChild(li);
+    }
+  }
+
+  function addUser(){
+    const name = document.getElementById("newUserName").value.trim();
+    const department = document.getElementById("newUserDepartment").value;
+    if(name.length < 3) return alert("Podaj poprawne imię i nazwisko");
+    // Generujemy email w stylu imie.nazwisko@ams.pl - na bazie imienia
+    const emailBase = name.toLowerCase().replace(/[^a-ząćęłńóśźż]/g,"").replace(/\s+/g,".");
+    let email = emailBase + "@ams.pl";
+    let count = 1;
+    while(users[email]) {
+      email = `${emailBase}${count}@ams.pl`;
+      count++;
+    }
+    users[email] = { password: null, name: name, role: "Personel", department: department };
+    alert(`Dodano użytkownika: ${name} (${email}). Hasło zostanie ustawione przy pierwszym logowaniu.`);
+    updateUserList();
+    document.getElementById("newUserName").value = "";
+  }
+
+</script>
+
+</body>
+</html>
